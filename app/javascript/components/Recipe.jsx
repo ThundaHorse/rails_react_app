@@ -6,13 +6,13 @@ import axios from "axios";
 
 class Recipe extends React.Component {
   constructor(props) {
-    super(props);
+    super(props);    
     this.state = { 
-      recipe: { 
-        ingredients: "" 
-      },      
+      recipe: {
+        ingredients: ""
+      },
       show: false
-    };
+    };    
 
     this.addHtmlEntities = this.addHtmlEntities.bind(this);
     this.deleteRecipe = this.deleteRecipe.bind(this);
@@ -30,7 +30,7 @@ class Recipe extends React.Component {
     const url = `/api/v1/recipes/${id}`;
 
     axios.get(url)
-      .then(response => {
+      .then(response => {                
         this.setState({ recipe: response.data })
       })
       .catch(error => {

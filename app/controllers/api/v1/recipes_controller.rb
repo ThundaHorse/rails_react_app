@@ -2,8 +2,8 @@ class Api::V1::RecipesController < ApplicationController
   before_action :authenticate_user
 
   def index
-    recipe = Recipe.all.order(created_at: :desc)
-    render json: recipe
+    @recipe = Recipe.where(user_id: current_user.id).order(created_at: :desc)
+    render json: @recipe
   end
 
   def create
@@ -31,10 +31,10 @@ class Api::V1::RecipesController < ApplicationController
   private
 
   def recipe_params
-    params.permit(:name, :image, :ingredients, :instruction)
+    params.permit(:user_id, :name, :image, :ingredients, :instruction)
   end
 
   def recipe
-    @recipe ||= Recipe.find(params[:id])
+    @recipe ||= Recipe.where(user_id: current_user.id, id: params[:id]).first
   end
 end

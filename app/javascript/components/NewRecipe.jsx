@@ -12,6 +12,7 @@ class NewRecipe extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      user_id: localStorage.getItem("user_id"),
       name: "",
       ingredients: "",
       instruction: ""
@@ -35,12 +36,13 @@ class NewRecipe extends React.Component {
   onSubmit(event) {
     event.preventDefault();
     const url = "/api/v1/recipes/";
-    const { name, ingredients, instruction } = this.state;
+    const { name, ingredients, instruction, user_id } = this.state;
 
     if (name.length == 0 || ingredients.length == 0 || instruction.length == 0)
       return;
 
     const body = {
+      user_id,
       name,
       ingredients,
       instruction: instruction.replace(/\n/g, "<br> <br>")
@@ -48,7 +50,7 @@ class NewRecipe extends React.Component {
 
     axios.post(url, body)
       .then(response => {
-        this.props.history.push(`/recipe/${response.data.id}`)
+        this.props.history.push(`/recipe/${response.data.id}`);
       })
       .catch(error => {
         console.log(error)

@@ -21,8 +21,10 @@ class Recipes extends React.Component {
       const userUrl = axios.get("/api/v1/users/" + localStorage.getItem("user_id"));
       axios.all([recipeUrl, userUrl])
         .then(axios.spread((...responses) => {
-          this.setState({ recipes: responses[0].data });
-          this.setState({ user: responses[1].data })
+          this.setState({ 
+            recipes: responses[0].data,
+            user: responses[1].data
+          });          
         }))
         .catch(error => {
           console.log(error);
@@ -53,7 +55,9 @@ class Recipes extends React.Component {
           />
           <div className="card-body">
             <h5 className="card-title">{recipe.name}</h5>
-            <Link to={`/recipe/${recipe.id}`} className="btn custom-button">
+            <Link 
+              to={`/recipe/${recipe.id}`} 
+              className="btn custom-button">
               View Recipe
             </Link>
           </div>
