@@ -1,28 +1,48 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+
+import Button from "react-bootstrap/Button";
 
 class Recipes extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      recipes: []
+      recipes: [],
+      user: {}
     };
+
+    this.logout = this.logout.bind(this);
   }
 
   componentDidMount() {
-    const url = "/api/v1/recipes/index";
-    fetch(url)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then(response => this.setState({ recipes: response }))
-      .catch(() => this.props.history.push("/"));
+    if (localStorage.getItem('jwt')) {
+      const recipeUrl = axios.get("/api/v1/recipes");
+      const userUrl = axios.get("/api/v1/users/" + localStorage.getItem("user_id"));
+      axios.all([recipeUrl, userUrl])
+        .then(axios.spread((...responses) => {
+          this.setState({ recipes: responses[0].data });
+          this.setState({ user: responses[1].data })
+        }))
+        .catch(error => {
+          console.log(error);
+          this.props.history.push("/")
+        })
+    } else {
+      this.props.history.push('/login');
+    }
   }
+
+  logout(event) {
+    event.preventDefault();
+    delete axios.defaults.headers.common["Authorization"];
+    localStorage.removeItem("jwt");
+    localStorage.removeItem("user_id");
+    this.props.history.push("/");
+  }
+
   render() {
-    const { recipes } = this.state;
+    const { recipes, user } = this.state;
     const allRecipes = recipes.map((recipe, index) => (
       <div key={index} className="col-md-6 col-lg-4">
         <div className="card mb-4">
@@ -51,7 +71,13 @@ class Recipes extends React.Component {
     return (
       <>
         <section className="jumbotron jumbotron-fluid text-center">
+          <Button className="mr-4 mt-1" style={{ float: 'right' }} variant="danger" onClick={this.logout}>
+            Log Out
+          </Button>
           <div className="container py-5">
+            <h1 className="display-2">
+              Welcome back {user.first_name} {user.last_name}!
+            </h1>
             <h1 className="display-4">Recipes for every occasion</h1>
             <p className="lead text-muted">
               We’ve pulled together our most popular recipes, our latest

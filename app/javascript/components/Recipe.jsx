@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import axios from "axios";
 
 class Recipe extends React.Component {
   constructor(props) {
@@ -26,17 +27,16 @@ class Recipe extends React.Component {
       }
     } = this.props;
 
-    const url = `/api/v1/show/${id}`;
+    const url = `/api/v1/recipes/${id}`;
 
-    fetch(url)
+    axios.get(url)
       .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error("Network response was not ok.");
+        this.setState({ recipe: response.data })
       })
-      .then(response => this.setState({ recipe: response }))
-      .catch(() => this.props.history.push("/recipes"));
+      .catch(error => {
+        console.log(error)
+        this.props.history.push("/recipes")
+      });
   }
 
   addHtmlEntities(str) {
@@ -59,23 +59,14 @@ class Recipe extends React.Component {
         params: { id }
       }
     } = this.props;
-    const url = `/api/v1/destroy/${id}`;
-    const token = document.querySelector('meta[name="csrf-token"]').content;
-      fetch(url, {
-      method: "DELETE",
-      headers: {
-        "X-CSRF-Token": token,
-        "Content-Type": "application/json"
-        }
-      })
+    const url = `/api/v1/recipes/${id}`;
+    axios.delete(url)
       .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error("Network response was not ok.");
+        this.props.history.push("/recipes")
       })
-      .then(() => this.props.history.push("/recipes"))
-      .catch(error => console.log(error.message));
+      .catch(error => {
+        console.log(error)
+      })
   }
 
   render() {

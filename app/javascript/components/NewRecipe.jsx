@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+
 import Row from "react-bootstrap/Row"
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
@@ -32,7 +34,7 @@ class NewRecipe extends React.Component {
 
   onSubmit(event) {
     event.preventDefault();
-    const url = "/api/v1/recipes/create";
+    const url = "/api/v1/recipes/";
     const { name, ingredients, instruction } = this.state;
 
     if (name.length == 0 || ingredients.length == 0 || instruction.length == 0)
@@ -44,23 +46,13 @@ class NewRecipe extends React.Component {
       instruction: instruction.replace(/\n/g, "<br> <br>")
     };
 
-    const token = document.querySelector('meta[name="csrf-token"]').content;
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "X-CSRF-Token": token,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(body)
-    })
+    axios.post(url, body)
       .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error("Network response was not ok.");
+        this.props.history.push(`/recipe/${response.data.id}`)
       })
-      .then(response => this.props.history.push(`/recipe/${response.id}`))
-      .catch(error => console.log(error.message));
+      .catch(error => {
+        console.log(error)
+      })
   }
 
   render() {
@@ -82,7 +74,7 @@ class NewRecipe extends React.Component {
                   onChange={this.onChange}
                 />
               </Form.Group>
-              <Form.Group constrolId="recipeIngredients">
+              <Form.Group controlId="recipeIngredients">
                 <Form.Label>Ingredients</Form.Label>
                 <Form.Control 
                   type="text"
