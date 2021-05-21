@@ -2,6 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import axios from "axios";
 
 class Recipe extends React.Component {
@@ -135,11 +137,15 @@ class Recipe extends React.Component {
               </Modal.Footer>
             </Modal>
 
-            <div className="col-sm-12 col-lg-2">
-              <button type="button" className="btn btn-danger" onClick={this.handleShow}>
+            <Col sm={12} lg={2}>
+              <Button variant="secondary">
+                Edit Recipe
+              </Button>
+              <Button variant="danger" onClick={this.handleShow}>
                 Delete Recipe
-              </button>
-            </div>
+              </Button>
+            </Col>
+            
           </div>
           <Link to="/recipes" className="btn btn-link">
             Back to recipes

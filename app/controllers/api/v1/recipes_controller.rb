@@ -23,9 +23,17 @@ class Api::V1::RecipesController < ApplicationController
     end
   end
 
+  def update
+    if recipe.update!(recipe_update_params)
+      render json: recipe 
+    else 
+      render json: recipe.errors
+    end
+  end 
+
   def destroy
     recipe&.destroy
-    render json: { message: 'Recipe deleted!' }
+    render json: { message: 'Recipe Deleted!' }
   end
 
   private
@@ -37,4 +45,8 @@ class Api::V1::RecipesController < ApplicationController
   def recipe
     @recipe ||= Recipe.where(user_id: current_user.id, id: params[:id]).first
   end
+
+  def recipe_update_params 
+    params.require(:recipe).permit(:name, :image, :ingredients, :instruction)
+  end 
 end
