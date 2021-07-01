@@ -6,6 +6,8 @@ import Popper from 'popper.js';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import App from "../components/App";
 import axios from "axios";
+import { Provider } from "react-redux";
+import store from "../store/store.js";
 
 var jwt = localStorage.getItem("jwt");
 if (jwt) {
@@ -15,7 +17,9 @@ axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[nam
 
 document.addEventListener("DOMContentLoaded", () => {
   render(
-    <App />,
+  <Provider store={store}>
+    <App />
+  </Provider>,
     document.body.appendChild(document.createElement("div"))
   );
 });
